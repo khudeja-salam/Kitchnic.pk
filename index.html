@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kitchnic.pk — Curated Kitchen Living</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -608,8 +608,10 @@ footer{background:#1A0F08;color:rgba(255,255,255,.6);padding:56px 24px 28px;}
   .policies-grid{grid-template-columns:repeat(2,1fr);}
   .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
   .payment-inner{flex-direction:column;text-align:center;}
-  .modal-layout{grid-template-columns:1fr;}
-  .modal-img-side{min-height:200px;font-size:5rem;}
+  .modal-layout{grid-template-columns:1fr;grid-template-rows:auto 1fr;}
+  .modal-img-side{height:300px;min-height:200px;font-size:5rem;}
+  .modal-info{height:auto;max-height:55svh;}
+  .product-modal{max-height:96svh;}
 }
 
 /* ── MOBILE ≤ 600px ── */
@@ -1690,9 +1692,11 @@ function buildCategoriesAndFilters(){
         <div class="cat-name">${cat}</div>
         <div class="cat-count">${catMap[cat]} item${catMap[cat]!==1?'s':''}</div>
       </div>`).join('');
-    // update grid columns based on count
-    const cols = Math.min(cats.length, 5);
-    grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    // NOTE: grid-template-columns is intentionally left to CSS media queries below.
+    // We no longer set an inline style here — doing so overrode the responsive
+    // @media rules (repeat(3,1fr) at <=900px, repeat(2,1fr) at <=600px) because
+    // inline styles beat media-query CSS in specificity. That was the #1 cause
+    // of broken mobile layout on the categories section.
   }
 
   // Filter bar
@@ -2312,34 +2316,6 @@ function toggleWish(e,id){
 
 function openReviewModal(){
   document.getElementById('reviewModal').classList.add('open');
-}
-function submitReview(){
-  const nameEl=document.querySelector('#reviewModal input[placeholder="Fatima Ahmed"]');
-  const cityEl=document.querySelector('#reviewModal input[placeholder="Lahore"]');
-  const textEl=document.querySelector('#reviewModal textarea');
-  const starEl=document.querySelector('#reviewModal input[name="stars"]:checked');
-  
-  const name=nameEl?.value.trim();
-  const city=cityEl?.value.trim();
-  const text=textEl?.value.trim();
-  const stars=starEl?parseInt(starEl.value):5;
-  
-  if(!name||!text){showToast('⚠️ Please enter your name and review.');return;}
-  
-  // Add to reviews array
-  customerReviews.unshift({name,city:city||'Pakistan',stars,text,emojis:[]});
-  
-  // Re-render reviews
-  renderReviews();
-  
-  // Close modal & reset
-  document.getElementById('reviewModal').classList.remove('open');
-  if(nameEl)nameEl.value='';
-  if(cityEl)cityEl.value='';
-  if(textEl)textEl.value='';
-  if(starEl)starEl.checked=false;
-  
-  showToast('✓ Shukriya! Aapka review publish ho gaya!');
 }
 
 /* ══ UTILITY ══ */
