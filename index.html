@@ -201,6 +201,13 @@ nav.scrolled{box-shadow:0 4px 24px rgba(44,31,20,.09);}
 .tag-new{background:var(--sage);color:#fff;}
 .tag-sale{background:var(--clay);color:#fff;}
 .tag-hot{background:var(--gold);color:var(--espresso);}
+.tag-hot{background:var(--gold);color:var(--espresso);}
+.tag-outofstock{background:#6b6b6b;color:#fff;}
+.product-img-wrap.oos{opacity:.55;}
+.add-to-cart:disabled{background:var(--mist);color:var(--text-muted);cursor:not-allowed;}
+.add-to-cart:disabled:hover{background:var(--mist);transform:none;}
+.modal-add-btn:disabled{background:var(--mist);color:var(--text-muted);cursor:not-allowed;}
+.modal-add-btn:disabled:hover{background:var(--mist);}
 .product-discount-badge{position:absolute;top:10px;right:10px;background:var(--red);color:#fff;font-size:.62rem;padding:4px 7px;border-radius:3px;font-weight:700;}
 .product-wishlist{position:absolute;bottom:10px;right:10px;width:32px;height:32px;border-radius:50%;background:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;opacity:0;transition:opacity .25s;box-shadow:0 2px 6px rgba(0,0,0,.1);}
 .product-card:hover .product-wishlist{opacity:1;}
@@ -695,7 +702,19 @@ footer{background:#1A0F08;color:rgba(255,255,255,.6);padding:56px 24px 28px;}
     <div class="cart-subtotal-row"><span>Subtotal</span><span id="cartSubtotal">Rs. 0</span></div>
     <div class="cart-discount-row" id="cartDiscountRow"><span>Discount</span><span id="cartDiscount"></span></div>
     <div class="cart-total"><span>Total</span><span id="cartTotal">Rs. 0</span></div>
-    <button class="checkout-btn" onclick="openCheckout()">Proceed to Checkout →</button>
+   <button class="checkout-btn" onclick="openCheckout()">Proceed to Checkout →</button>
+  </div>
+</div>
+
+<!-- WISHLIST SIDEBAR -->
+<div class="cart-overlay" id="wishOverlay" onclick="closeWishlist()"></div>
+<div class="cart-sidebar" id="wishSidebar">
+  <div class="cart-header">
+    <h2>Your Wishlist</h2>
+    <button class="cart-close" onclick="closeWishlist()">✕</button>
+  </div>
+  <div class="cart-items" id="wishItems">
+    <div class="cart-empty"><div class="ei">🤍</div><p>Your wishlist is empty.<br>Tap the heart on any product to save it.</p></div>
   </div>
 </div>
 
@@ -761,17 +780,9 @@ footer{background:#1A0F08;color:rgba(255,255,255,.6);padding:56px 24px 28px;}
       <label class="pay-method selected" id="pmCOD">
         <input type="radio" name="payment" value="cod" checked onchange="selectPayMethod(this)"> 💵 Cash on Delivery
       </label>
-      <label class="pay-method" id="pmCard">
-        <input type="radio" name="payment" value="card" onchange="selectPayMethod(this)"> 💳 Online Card Payment
-      </label>
+      
     </div>
-    <div id="cardFields" style="display:none">
-      <div class="form-group"><label>Card Number</label><input type="text" placeholder="4242 4242 4242 4242"></div>
-      <div class="form-row">
-        <div class="form-group"><label>Expiry</label><input type="text" placeholder="MM / YY"></div>
-        <div class="form-group"><label>CVV</label><input type="text" placeholder="123"></div>
-      </div>
-    </div>
+   
     <label class="gift-packaging-check">
       <input type="checkbox" id="giftPkgCheckout" onchange="updateCheckoutTotal()">
       <div>
@@ -831,7 +842,7 @@ footer{background:#1A0F08;color:rgba(255,255,255,.6);padding:56px 24px 28px;}
     </ul>
     <div class="nav-right">
       <button class="nav-icon" onclick="openSearch()" title="Search">🔍</button>
-      <button class="nav-icon" title="Wishlist" onclick="showToast('♡ Wishlist coming soon!')">♡</button>
+      <button class="nav-icon" onclick="openWishlist()">♡<span class="cart-badge" id="wishBadge">0</span></button>
       <button class="nav-icon" onclick="openCart()">🛒<span class="cart-badge" id="cartBadge">0</span></button>
       <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
     </div>
@@ -1141,15 +1152,20 @@ footer{background:#1A0F08;color:rgba(255,255,255,.6);padding:56px 24px 28px;}
         <li><a href="#shop" onclick="filterProducts('Storage',null)">Storage</a></li>
         <li><a href="#shop" onclick="filterProducts('Bottles',null)">Bottles</a></li>
       </ul></div>
-      <div class="footer-col"><h5>Company</h5><ul class="footer-links">
-        <li><a href="#">About Us</a></li><li><a href="#">Sustainability</a></li>
-        <li><a href="#">Blog / Journal</a></li><li><a href="#">Careers</a></li>
+   <div class="footer-col"><h5>Company</h5><ul class="footer-links">
+        <li><a href="#" onclick="showToast('✨ Coming soon!');return false;">About Us</a></li>
+        <li><a href="#" onclick="showToast('✨ Coming soon!');return false;">Sustainability</a></li>
+        <li><a href="#" onclick="showToast('✨ Coming soon!');return false;">Blog / Journal</a></li>
+        <li><a href="#" onclick="showToast('✨ Coming soon!');return false;">Careers</a></li>
       </ul></div>
-      <div class="footer-col"><h5>Support</h5><ul class="footer-links">
-        <li><a href="#">Track My Order</a></li><li><a href="#policies">Return Policy</a></li>
-        <li><a href="#policies">Delivery Info</a></li><li><a href="#">FAQ</a></li>
-        <li><a href="#contact">Contact Us</a></li><li><a href="#contact">WhatsApp Us</a></li>
-      </ul></div>
+    <div class="footer-col"><h5>Support</h5><ul class="footer-links">
+        <li><a href="#" onclick="showToast('📦 Order tracking coming soon! Message us on WhatsApp for status.');return false;">Track My Order</a></li>
+        <li><a href="#policies">Return Policy</a></li>
+        <li><a href="#policies">Delivery Info</a></li>
+        <li><a href="#" onclick="showToast('❓ FAQ page coming soon! Message us on WhatsApp for questions.');return false;">FAQ</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+        <li><a href="https://wa.me/923498308471" target="_blank">WhatsApp Us</a></li>
+      </ul></div>  
     </div>
     <div class="footer-bottom">
       <span>© <span id="footerYear"></span> Kitchnic.pk — All rights reserved.</span>
@@ -1342,303 +1358,7 @@ const customerReviews = [
   // },
 ];
 
-const products = [
-
-  // ─── PRODUCT 1 ─────────────────────────────────────────────
-  {
-    id: 1,
-    name: 'Glass Mug Wooden Cap',
-    cat: 'Glassware',
-    price: 999,
-    oldPrice: 1499,
-    imgs: ['img1.jpeg', 'img2.jpeg', 'img3.jpeg', 'img4.jpeg', 'img5.jpeg', 'img6.jpeg', 'img7.jpeg'],
-    emoji: '🥛',
-    tag: 'sale',
-    rating: 4.8,
-    reviews: 124,
-    desc: 'This 450ml–500ml Glass Can Mug is a premium piece of drinkware designed for both style and utility. It features a high-quality, clear glass body in a modern "can" shape, making it ideal for aesthetically pleasing beverages like iced lattes, smoothies, or detox waters.',
-    colors: [
-      { color: '#95AABA', label: 'Light Blue-Grey', imgs: ['img1.jpeg'] },
-      { color: '#537971', label: 'Deep Teal',       imgs: ['img2.jpeg'] },
-      { color: '#E8E5D8', label: 'Brilliant Yellow', imgs: ['img3.jpeg'] },
-      { color: '#C6A599', label: 'Pale Brown/Taupe', imgs: ['img4.jpeg'] },
-      { color: '#64707A', label: 'Grey',             imgs: ['img5.jpeg'] },
-      { color: '#8D9FB0', label: 'Blue',             imgs: ['img6.jpeg'] },
-      { color: '#466D65', label: 'Green',            imgs: ['img7.jpeg'] },
-    ],
-  },
-
-  // ─── PRODUCT 2 ─────────────────────────────────────────────
-  {
-    id: 2,
-    name: 'Silicone Utensils 12pcs Set (Random Colors) Premium Quality',
-    cat: 'Utensils',
-    price: 1499,
-    img: 'utensilset.jpeg',
-    emoji: '🥄',
-    tag: 'hot',
-    rating: 4.9,
-    reviews: 312,
-    desc: 'This 12-piece silicone kitchen utensil set is a comprehensive culinary kit designed for non-stick cookware, featuring food-grade, BPA-free silicone heads and ergonomic wooden handles. Heat-resistant up to 446°F (230°C). Includes slotted spoon, solid spoon, soup ladle, pasta server, whisk, spatula, solid turner, slotted turner, basting brush, tongs, and a spoon rest. Comes with a matching storage bucket.',
-  },
-
-  // ─── PRODUCT 3 ─────────────────────────────────────────────
-  {
-    id: 3,
-    name: 'Viral Pinterest Style Tea Set with Wooden Stand',
-    cat: 'Tea Sets',
-    price: 16500,
-    oldPrice: 19500,
-    img: 'Viral pintrest style tea set with wooden stand .jpeg',
-    emoji: '🍵',
-    tag: 'sale',
-    rating: 4.9,
-    reviews: 89,
-    desc: 'This 13-piece "Donut Series" ceramic tea set features a trendy, bubble-inspired aesthetic perfect for modern home decor. Includes 6 cups, 6 saucers, 1 kettle with lid, all displayed on a two-tier bamboo wood stand. Made from premium, high-quality porcelain with a smooth glossy finish. Microwave, dishwasher, and freezer safe. Available in 4 pastel colors.',
-  },
-
-  // ─── PRODUCT 4 ─────────────────────────────────────────────
-  {
-    id: 4,
-    name: '3 Tier Trolley Folding',
-    cat: 'Storage',
-    price: 7499,
-    oldPrice: 8499,
-    imgs: ['trolley1.jpeg', 'trolley2.jpeg', 'trolley3.jpeg'],
-    emoji: '🪵',
-    tag: 'new',
-    rating: 4.7,
-    reviews: 56,
-    desc: 'Organize your home or workspace with this versatile 3-Tier Foldable Rolling Utility Cart. Crafted from durable metal with a sleek powder-coated finish. Features a one-second folding mechanism, 4 heavy-duty 360° swivel casters (2 with locks), three deep mesh wire baskets for airflow, and requires no assembly. Simply unfold and start organizing.',
-  },
-
-  // ─── PRODUCT 5 ─────────────────────────────────────────────
-  {
-    id: 5,
-    name: 'PushDown Chopper 2Kg Steel',
-    cat: 'Utensils',
-    price: 800,
-    oldPrice: 1300,
-    img: 'PushDown Chopper 2Kg Steel.jpeg',
-    emoji: '🥄',
-    tag: 'sale',
-    rating: 4.8,
-    reviews: 203,
-    desc: 'This Multi-Function Hand-Pushing Chopper is a versatile, electricity-free kitchen tool. Features a 2-liter food-grade SUS 304 stainless steel bowl and four sharp curved stainless steel blades. Easily chops, minces, and blends vegetables, fruits, nuts, herbs, and even boneless meat — no electricity needed.',
-  },
-
-  // ─── PRODUCT 6 ─────────────────────────────────────────────
-  {
-    id: 6,
-    name: 'Ecoco Cling Wrap Cutter with Suction Bottom',
-    cat: 'Storage',
-    price: 3199,
-    oldPrice: 3699,
-    imgs: ['Cling Wrap Cutter.jpeg', 'Ecoco Cling Wrap Cutter.jpeg'],
-    emoji: '🫙',
-    tag: 'sale',
-    rating: 4.6,
-    reviews: 78,
-    desc: 'The Ecoco Cling Wrap Cutter is a versatile kitchen tool designed for quick, clean, and hassle-free food wrapping. Features a built-in two-way sliding cutter for smooth, straight cuts without tangling or uneven tearing. Suction bottom provides perfect grip on any surface.',
-  },
-
-  // ─── PRODUCT 7 ─────────────────────────────────────────────
-  {
-    id: 7,
-    name: 'Ecoco Premium Wall Mounted Spice Box',
-    cat: 'Storage',
-    price: 3000,
-    img: 'spicebox.jpeg',
-    emoji: '🧂',
-    tag: 'hot',
-    rating: 4.7,
-    reviews: 145,
-    desc: 'The ECOCO Premium Wall-Mounted Spice Box is a sleek, modern kitchen organizer designed to store seasonings like salt, pepper, and sugar in a space-saving, accessible way. No-drill installation. Made from durable, food-grade ABS, PS, and PP plastic.',
-  },
-
-  // ─── PRODUCT 8 ─────────────────────────────────────────────
-  {
-    id: 8,
-    name: 'Acrylic Water Bottle 1000ml',
-    cat: 'Bottles',
-    price: 850,
-    img: 'bottle.jpeg',
-    emoji: '🧴',
-    tag: '',
-    rating: 5.0,
-    reviews: 42,
-    desc: 'Stay hydrated in style with this 1000ml Aesthetic Water Bottle. Crafted from premium BPA-free acrylic with a frosted finish. Features hourly time markers to track daily intake, lightweight leak-proof design, and a luxury gold-finish cap. Perfect for gym, office, or home.',
-    sizes: ['1000ml'],
-  },
-
-  // ─── PRODUCT 9 ─────────────────────────────────────────────
-  {
-    id: 9,
-    name: 'Glass Coffee Mixing Mug 400ml',
-    cat: 'Appliances',
-    price: 1400,
-    img: 'Glass Coffee Mixing Mug.jpeg',
-    emoji: '☕',
-    tag: 'new',
-    rating: 4.8,
-    reviews: 267,
-    desc: 'Experience the ultimate convenience with this 400ml Self-Stirring Glass Mug. Features a powerful 7000 rpm motor that blends beverages to a smooth consistency with just one touch. Made from premium heat-resistant glass with a wood-textured handle and lid. Cordless, battery-operated — perfect for home, office, or gym.',
-    sizes: ['400ml'],
-  },
-
-  // ─── PRODUCT 10 ────────────────────────────────────────────
-  {
-    id: 10,
-    name: 'Coffee Beater Rechargeable',
-    cat: 'Appliances',
-    price: 1400,
-    img: 'Coffee Beater chargeable.jpeg',
-    emoji: '🔌',
-    tag: '',
-    rating: 4.8,
-    reviews: 93,
-    desc: 'The rechargeable coffee beater is a handheld, multi-functional kitchen tool designed to create professional café-style drinks at home. Built-in battery, conveniently charged via USB. No more disposable batteries. Creates perfect frothy coffee, hot chocolate, and protein shakes in seconds.',
-  },
-
-  // ─── PRODUCT 11 ────────────────────────────────────────────
-  {
-    id: 11,
-    name: 'We Bare Bears Frosted Bottle 1000ml',
-    cat: 'Bottles',
-    price: 1350,
-    img: 'We Bare Bears.jpeg',
-    emoji: '🥛',
-    tag: 'hot',
-    rating: 4.9,
-    reviews: 178,
-    desc: 'The We Bare Bears frosted 2-in-1 water bottle is a popular 1000ml bottle with a dual-use design and cute cartoon bear graphics. Perfect for water, juices, or smoothies. Frosted finish keeps drinks cool longer.',
-  },
-
-  // ─── PRODUCT 12 ────────────────────────────────────────────
-  {
-    id: 12,
-    name: 'Ecoco Kitchen Tissue Box Wall-Mounted (Free Tissue Roll Inside)',
-    cat: 'Storage',
-    price: 2699,
-    img: 'Ecoco kitchen Tissue Box Wall-mounted.jpeg',
-    emoji: '🧻',
-    tag: 'new',
-    rating: 4.8,
-    reviews: 34,
-    desc: 'The Ecoco Wall-Mounted Tissue Box is a multi-functional, space-saving dispenser for kitchens, bathrooms, or living areas. Sleek waterproof capsule design protects tissues from moisture, dust, and grease. Comes with one free tissue roll. Easy installation.',
-  },
-
-  // ─── PRODUCT 13 ────────────────────────────────────────────
-  {
-    id: 13,
-    name: 'Iron Protective Cover',
-    cat: 'Appliances',
-    price: 449,
-    img: 'ironcover.jpeg',
-    emoji: '🔌',
-    tag: 'new',
-    rating: 4.8,
-    reviews: 34,
-    desc: 'This Iron Protective Cover safeguards your clothes from heat damage and shine marks. Made from premium PTFE/Teflon, it withstands high temperatures — safe for silk, nylon, and wool. Oil-resistant, waterproof, with a perforated surface for even steam distribution. Universal fit with secure spring attachment for most standard irons.',
-  },
-
-  // ─── PRODUCT 14 ────────────────────────────────────────────
-  {
-    id: 14,
-    name: 'AirFryer Liner Paper Pack of 50',
-    cat: 'Bakeware',
-    price: 399,
-    oldPrice: 549,
-    imgs: ['sheet1.jpeg', 'sheet2.jpeg', 'sheet3.jpeg'],
-    emoji: '🧁',
-    tag: 'new',
-    rating: 4.8,
-    reviews: 34,
-    desc: 'Pack of 50 disposable round Air Fryer Paper Liners designed to simplify cooking and cleanup. Food-grade, non-stick, and heat-resistant. Prevents food from sticking to the basket and makes cleaning effortless.',
-  },
-
-  // ─── PRODUCT 15 ────────────────────────────────────────────
-  {
-    id: 15,
-    name: 'Grain & Rice Dispenser',
-    cat: 'Storage',
-    price: 5000,
-    oldPrice: 7199,
-    imgs: ['Graindispenser.jpeg', 'grain dispenser.jpeg', 'Rice and Grain Dispenser.jpeg'],
-    emoji: '🫙',
-    tag: 'sale',
-    rating: 4.6,
-    reviews: 78,
-    desc: 'A premium transparent grain and rice dispenser with one-click dispensing mechanism. Keeps your grains, lentils, and dry foods fresh, organized, and dust-free. Airtight sealed lid, clear body to monitor levels at a glance.',
-    sizes: ['Standard', 'Large'],
-    sizePrices: {
-      'Standard': 5000,
-      'Large':    5499,
-    },
-  },
-
-  // ─── PRODUCT 16 ────────────────────────────────────────────
-  {
-    id: 16,
-    name: 'Rice Dispenser 6-in-1 10KG Capacity',
-    cat: 'Storage',
-    price: 6000,
-    img: '6in1 dispenser.jpeg',
-    emoji: '🪣',
-    tag: 'new',
-    rating: 4.8,
-    reviews: 34,
-    desc: 'This 6-in-1 Dry Food Dispenser features six separate compartments for rice, lentils, beans, corn, and small grains. One-button dispensing per compartment, transparent body, airtight sealed lid. Can be wall-mounted or used as countertop storage. Keeps food fresh and pest-free.',
-  },
-
-  // ─── PRODUCT 17 ────────────────────────────────────────────
-  {
-    id: 17,
-    name: 'Rice Dispenser Golden Legs',
-    cat: 'Storage',
-    price: 5000,
-    img: 'Rice Dispenser Golden legs.jpeg',
-    emoji: '🫙',
-    tag: 'new',
-    rating: 4.8,
-    reviews: 34,
-    desc: 'This Nordic-style rice dispenser features a sleek white and gold aesthetic with a transparent ribbed body for easy monitoring of food levels. Designed for modern kitchens, includes four elevated gold legs and a convenient one-click dispensing button.',
-    sizes: ['Standard', 'Large'],
-  },
-
-  // ─── PRODUCT 18 ────────────────────────────────────────────
-  {
-    id: 18,
-    name: 'Vegetable and Fruit Peeler Machine — Big Size',
-    cat: 'Appliances',
-    price: 3600,
-    img: 'Vegetable and Fruit Peller Machine.jpeg',
-    emoji: '🔌',
-    tag: 'new',
-    rating: 4.5,
-    reviews: 34,
-    desc: 'An automatic fruit and vegetable peeler machine with one-touch motorized operation. Robotic arm with stainless steel blades adjusts to the shape of potatoes, apples, cucumbers, and more. Minimizes food waste and saves time compared to manual peeling.',
-  },
-
-  // ─── PRODUCT 19 ────────────────────────────────────────────
-  {
-    id: 19,
-    name: '3-in-1 Fruit & Vegetable Drainer',
-    cat: 'Storage',
-    price: 800,
-    img: 'Amazon 3 in 1 Drainer.jpeg',
-    emoji: '🥗',
-    tag: 'new',
-    rating: 4.8,
-    reviews: 34,
-    desc: 'A 3-in-1 multifunctional drainer that works as a colander, washing basin, and storage tray. Perfect for draining fruits, vegetables, pasta, and more. Durable, food-safe material with stackable design for easy storage.',
-    sizes: ['Standard', 'Large'],
-  },
-
-  // 💡 NAYA PRODUCT YAHAN ADD KARO — upar wala block copy karo
-  // Sirf id number badalna mat bhoolna!
-
-];
+let products = [];
 
 /* ── STATE ── */
 let cart=[], activeFilter='all', wishlist=new Set();
@@ -1671,6 +1391,43 @@ const CAT_EMOJI = {
 
 function getCatEmoji(cat){
   return CAT_EMOJI[cat] || '📦';
+}
+
+function getCatEmoji(cat){
+  return CAT_EMOJI[cat] || '📦';
+}
+
+/* ══ LOAD PRODUCTS FROM SUPABASE ══ */
+function mapDbProduct(r){
+  return {
+    id: r.id,
+    name: r.name,
+    cat: r.cat,
+    price: r.price,
+    oldPrice: r.old_price || undefined,
+    img: r.img || undefined,
+    imgs: r.imgs || undefined,
+    emoji: r.emoji || '📦',
+    tag: r.tag || '',
+    rating: r.rating || 0,
+    reviews: r.reviews_count || 0,
+    desc: r.description || '',
+    colors: r.colors || undefined,
+    sizes: r.sizes || undefined,
+    sizePrices: r.size_prices || undefined,
+    inStock: r.in_stock !== false,
+  };
+}
+
+async function loadProductsFromSupabase(){
+  try{
+    const data = await sbFetch('/products?order=id.asc');
+    if(Array.isArray(data) && data.length){
+      products = data.map(mapDbProduct);
+    }
+  }catch(e){
+    console.error('Failed to load products from Supabase:', e);
+  }
 }
 
 /* ══ BUILD CATEGORIES & FILTERS DYNAMICALLY ══ */
@@ -1727,13 +1484,14 @@ function renderProducts(list){
   list.forEach((p,i)=>{
     const inCart=cart.find(c=>c.id===p.id);
     const discPct = p.oldPrice ? Math.round((1-p.price/p.oldPrice)*100) : 0;
+    const outOfStock = p.inStock===false;
     const d=document.createElement('div');
     d.className='product-card';
     d.style.animationDelay=(i*.05)+'s';
     d.innerHTML=`
-      <div class="product-img-wrap" onclick="openProductModal(${p.id})">
-        ${p.tag?`<span class="product-tag tag-${p.tag}">${p.tag}</span>`:''}
-        ${discPct?`<span class="product-discount-badge">-${discPct}%</span>`:''}
+      <div class="product-img-wrap${outOfStock?' oos':''}" onclick="openProductModal(${p.id})">
+        ${outOfStock?`<span class="product-tag tag-outofstock">Out of Stock</span>`:p.tag?`<span class="product-tag tag-${p.tag}">${p.tag}</span>`:''}
+        ${!outOfStock&&discPct?`<span class="product-discount-badge">-${discPct}%</span>`:''}
         <button class="product-wishlist${wishlist.has(p.id)?' liked':''}" onclick="toggleWish(event,${p.id})">${wishlist.has(p.id)?'❤️':'🤍'}</button>
         ${(()=>{ const raw=p.imgs?p.imgs[0]:p.img; const src=resolveImgSrc(raw); return src?`<img src="${src}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''})()}
         <span style="${(p.imgs&&p.imgs[0])||p.img?'display:none':''}">${p.emoji}</span>
@@ -1747,13 +1505,12 @@ function renderProducts(list){
             <span class="product-price">${fmt(p.price)}</span>
             ${p.oldPrice?`<span class="product-price-old">${fmt(p.oldPrice)}</span><span class="product-discount-pct">Save ${discPct}%</span>`:''}
           </div>
-          <button class="add-to-cart${inCart?' added':''}" id="atc-${p.id}" onclick="quickAddToCart(event,${p.id})" title="Add to cart">${inCart?'✓':'+'}</button>
+          <button class="add-to-cart${inCart?' added':''}" id="atc-${p.id}" onclick="quickAddToCart(event,${p.id})" title="${outOfStock?'Out of stock':'Add to cart'}" ${outOfStock?'disabled':''}>${outOfStock?'✕':inCart?'✓':'+'}</button>
         </div>
       </div>`;
     grid.appendChild(d);
   });
 }
-
 function renderStars(r){
   let s='';
   for(let i=1;i<=5;i++) s += i<=Math.floor(r)?'★':(i-0.5<=r?'⭑':'☆');
@@ -2031,9 +1788,18 @@ if(typeof p.colors[0]==='object'&&p.colors[0].imgs?.length){
     sizeDiv.innerHTML=`<div class="modal-option-label">Size / Quantity</div><div class="option-btns">${p.sizes.map((s,i)=>`<button class="opt-btn${i===0?' selected':''}" onclick="selectSize('${s}',this)">${s}</button>`).join('')}</div>`;
   }else sizeDiv.innerHTML='';
 
-  // Wishlist btn
+ // Wishlist btn
   document.getElementById('mWishBtn').innerHTML=wishlist.has(id)?'❤️ In Wishlist':'♡ Add to Wishlist';
-  document.getElementById('mAddBtn').onclick=()=>addToCartFromModal();
+  const outOfStock=p.inStock===false;
+  const addBtn=document.getElementById('mAddBtn');
+  if(outOfStock){
+    addBtn.disabled=true;
+    addBtn.innerHTML='Out of Stock';
+  }else{
+    addBtn.disabled=false;
+    addBtn.onclick=()=>addToCartFromModal();
+    updateModalTotal(p);
+  }
   document.getElementById('productModal').classList.add('open');
 }
 
@@ -2252,6 +2018,9 @@ document.body.appendChild(waLink);
 waLink.click();
 document.body.removeChild(waLink);
 
+ // ── Save order to Supabase ──
+  saveOrderToSupabase({orderNum,fname,lname,phone,email,addr,city,province,payMethod,giftPkg,items:cart,subtotal,discount,giftCharge,total});
+
   // ── Show order receipt modal ──
   document.getElementById('checkoutModal').classList.remove('open');
   showOrderReceipt({orderNum,fname,lname,phone,email,addr,city,province,payMethod,giftPkg,subtotal,discount,giftCharge,total});
@@ -2262,6 +2031,36 @@ document.body.removeChild(waLink);
   document.getElementById('couponSuccess').classList.remove('show');
   updateCart();
   renderProducts(activeFilter==='all'?products:products.filter(p=>p.cat===activeFilter));
+}
+
+async function saveOrderToSupabase(o){
+  try {
+    await sbFetch('/orders', {
+      method: 'POST',
+      prefer: 'return=minimal',
+      body: JSON.stringify({
+        order_number: o.orderNum,
+        first_name: o.fname,
+        last_name: o.lname || '',
+        email: o.email,
+        phone: o.phone,
+        address: o.addr,
+        city: o.city,
+        province: o.province || '',
+        items: o.items.map(i=>({name:i.name, variant:i.variant, qty:i.qty, price:i.price})),
+        subtotal: o.subtotal,
+        discount: o.discount,
+        gift_packaging: !!o.giftPkg,
+        gift_charge: o.giftCharge,
+        total: o.total,
+        payment_method: o.payMethod,
+        status: 'pending',
+      }),
+    });
+  } catch(e) {
+    console.error('Order save failed:', e);
+    // Order still placed via WhatsApp even if Supabase save fails
+  }
 }
 
 function showOrderReceipt(o){
@@ -2307,10 +2106,52 @@ function showOrderReceipt(o){
 /* ══ WISHLIST ══ */
 function toggleWish(e,id){
   e?.stopPropagation();
-  if(wishlist.has(id))wishlist.delete(id);
+  if(wishlist.has(id)){wishlist.delete(id);}
   else{wishlist.add(id);showToast('❤️ Added to wishlist');}
   const list=currentSearchResults??(activeFilter==='all'?products:products.filter(p=>p.cat===activeFilter));
   renderProducts(list);
+  updateWishBadge();
+  if(document.getElementById('wishSidebar').classList.contains('open'))renderWishItems();
+}
+
+function updateWishBadge(){
+  const badge=document.getElementById('wishBadge');
+  if(badge){badge.textContent=wishlist.size;badge.classList.toggle('visible',wishlist.size>0);}
+}
+
+function openWishlist(){
+  renderWishItems();
+  document.getElementById('wishSidebar').classList.add('open');
+  document.getElementById('wishOverlay').classList.add('open');
+}
+function closeWishlist(){
+  document.getElementById('wishSidebar').classList.remove('open');
+  document.getElementById('wishOverlay').classList.remove('open');
+}
+
+function renderWishItems(){
+  const el=document.getElementById('wishItems');
+  const items=products.filter(p=>wishlist.has(p.id));
+  if(!items.length){
+    el.innerHTML=`<div class="cart-empty"><div class="ei">🤍</div><p>Your wishlist is empty.<br>Tap the heart on any product to save it.</p></div>`;
+    return;
+  }
+  el.innerHTML=items.map(p=>{
+    const raw=p.imgs?p.imgs[0]:p.img;
+    const src=resolveImgSrc(raw);
+    return `
+    <div class="cart-item">
+      <div class="cart-item-img">${src?`<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.style.display='none'">`:p.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${p.name}</div>
+        <div class="cart-item-price">${fmt(p.price)}</div>
+        <div class="cart-item-controls">
+          <button class="qty-btn" style="width:auto;border-radius:4px;padding:0 10px;font-size:.75rem" onclick="closeWishlist();openProductModal(${p.id})">View</button>
+          <button class="remove-item" onclick="toggleWish(null,${p.id})">Remove</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 
@@ -2489,10 +2330,13 @@ ${message}`
   showToast('✓ WhatsApp khul raha hai — message bhej dein!');
 }
 // ══ INIT ══════════════════════════════════════════
-applySiteConfig();
-buildCategoriesAndFilters();
-renderProducts(products);
-renderReviews();
+(async function initApp(){
+  applySiteConfig();
+  await loadProductsFromSupabase();
+  buildCategoriesAndFilters();
+  renderProducts(products);
+  renderReviews();
+})();
 </script>
 </body>
 </html>
