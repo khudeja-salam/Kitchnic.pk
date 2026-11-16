@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -699,6 +699,7 @@ footer{background:#1A0F08;color:rgba(255,255,255,.6);padding:56px 24px 28px;}
       </div>
       <div class="coupon-success" id="couponSuccess">✓ Coupon applied! 10% discount added.</div>
     </div>
+        <div style="font-size:.74rem;color:var(--text-muted);margin-bottom:8px;">🚚 Free delivery on online payment. COD delivery charges checkout par calculate honge.</div>
     <div class="cart-subtotal-row"><span>Subtotal</span><span id="cartSubtotal">Rs. 0</span></div>
     <div class="cart-discount-row" id="cartDiscountRow"><span>Discount</span><span id="cartDiscount"></span></div>
     <div class="cart-total"><span>Total</span><span id="cartTotal">Rs. 0</span></div>
@@ -775,12 +776,20 @@ footer{background:#1A0F08;color:rgba(255,255,255,.6);padding:56px 24px 28px;}
         </select>
       </div>
     </div>
-    <div class="form-divider">Payment Method</div>
-    <div class="payment-method-options">
+        <div class="form-divider">Payment Method</div>
+       <div class="payment-method-options">
       <label class="pay-method selected" id="pmCOD">
         <input type="radio" name="payment" value="cod" checked onchange="selectPayMethod(this)"> 💵 Cash on Delivery
       </label>
-      
+      <label class="pay-method" id="pmOnline">
+        <input type="radio" name="payment" value="online" onchange="selectPayMethod(this)"> 📱 Online Payment (Free Delivery)
+      </label>
+    </div>
+    <!-- Online select karne par ye box dikhega -->
+    <div id="onlinePayInfo" style="display:none;background:#FDF5EF;border:1px solid var(--clay);border-radius:6px;padding:12px 14px;font-size:.82rem;line-height:1.7;margin-bottom:14px;">
+      🚚 <b>Free delivery</b> on online payment! To pay online (JazzCash / Easypaisa / Bank Transfer), please contact us on
+      <a class="online-pay-phone" href="#" target="_blank" style="color:var(--clay);font-weight:600;">0312-3456789</a>
+      (WhatsApp / call). We will confirm your order and share the payment details.
     </div>
    
     <label class="gift-packaging-check">
@@ -972,9 +981,7 @@ footer{background:#1A0F08;color:rgba(255,255,255,.6);padding:56px 24px 28px;}
     <div class="payment-title">Flexible <em>payment</em><br>options for you</div>
     <div class="payment-options">
       <div class="payment-opt"><span class="payment-opt-icon">💵</span>Cash on Delivery</div>
-      <div class="payment-opt"><span class="payment-opt-icon">💳</span>Visa / Mastercard</div>
-      <div class="payment-opt"><span class="payment-opt-icon">📱</span>JazzCash</div>
-      <div class="payment-opt"><span class="payment-opt-icon">🏦</span>EasyPaisa</div>
+      <div class="payment-opt"><span class="payment-opt-icon">📱</span>Online Payment (Free Delivery): contact <span class="online-pay-phone">0312-3456789</span></div>
     </div>
   </div>
 </div>
@@ -1170,8 +1177,7 @@ footer{background:#1A0F08;color:rgba(255,255,255,.6);padding:56px 24px 28px;}
     <div class="footer-bottom">
       <span>© <span id="footerYear"></span> Kitchnic.pk — All rights reserved.</span>
       <div class="footer-payment-icons">
-        <span class="pay-icon">COD</span><span class="pay-icon">Visa</span>
-        <span class="pay-icon">MC</span><span class="pay-icon">Jazz</span><span class="pay-icon">Easypaisa</span>
+              <span class="pay-icon">COD</span><span class="pay-icon">Online (contact us)</span> 
       </div>
       <span>Privacy Policy · Terms of Service</span>
     </div>
@@ -1204,8 +1210,13 @@ const SITE = {
   whatsappCommunity: 'https://chat.whatsapp.com/E937aMXwkuy1BWUvjShS2V',
 
   // ── DELIVERY & PRICING ────────────────────────────────────────
-  freeDeliveryAbove:  10000,  // ← free delivery limit (Rs.)
+    freeDeliveryAbove:  10000,   // ← COD pe is amount se upar delivery free (Rs.)
+  deliveryCharge:     250,    // ← COD delivery charge (apna asli charge likho, 0 = koi charge nahi)
   giftPackagingPrice: 200,    // ← gift packaging charge (Rs.)
+
+  // ── ONLINE PAYMENT (manual, contact ke zariye) ──
+  onlinePaymentPhone: '0312-3456789',               // ← website pe ye number dikhega
+  onlinePaymentWA:    'https://wa.me/923123456789', // ← 92 ke baad number, pehle 0 ke baghair
 
   // ── COUPON CODES ──────────────────────────────────────────────
   // Format: 'CODE': discount_percent
@@ -1233,8 +1244,7 @@ const SITE = {
 function applySiteConfig(){
   // top bar
   const tb = document.querySelector('.top-bar');
-  if(tb) tb.innerHTML = `🚚 Free delivery on orders above <span>Rs. ${SITE.freeDeliveryAbove.toLocaleString()}</span> &nbsp;|&nbsp; Cash on Delivery Available &nbsp;|&nbsp; Easy 30-Day Returns`;
-
+   if(tb) tb.innerHTML = `🚚 Free delivery on <span>Online Payment</span> or orders above <span>Rs. ${SITE.freeDeliveryAbove.toLocaleString()}</span> &nbsp;|&nbsp; Cash on Delivery Available &nbsp;|&nbsp; Easy 30-Day Returns`;
   // hero
   const ht = document.querySelector('.hero-title');
   if(ht){ const parts = SITE.heroTitle.split(' ');
@@ -1265,6 +1275,9 @@ function applySiteConfig(){
   document.querySelectorAll('.gift-pkg-price').forEach(el=>el.textContent=`+Rs. ${SITE.giftPackagingPrice}`);
   document.querySelectorAll('.gift-pack-price').forEach(el=>el.textContent=`+Rs. ${SITE.giftPackagingPrice}`);
 
+    // online payment ka number har jagah lagao
+  document.querySelectorAll('.online-pay-phone').forEach(el=>el.textContent=SITE.onlinePaymentPhone);
+  document.querySelectorAll('a.online-pay-phone').forEach(a=>a.href=SITE.onlinePaymentWA);
   // footer desc
   const fd = document.querySelector('.footer-desc');
   if(fd) fd.textContent = SITE.footerDesc;
@@ -1935,22 +1948,40 @@ function openCheckout(){
   document.getElementById('checkoutModal').classList.add('open');
 }
 
+/* ══ DELIVERY + PAYMENT HELPERS ══ */
+// Kaunsa payment method select hai (cod ya online)
+function getSelectedPayMethod(){
+  return document.querySelector('input[name="payment"]:checked')?.value || 'cod';
+}
+
+// Delivery charge: online = hamesha FREE, COD = limit se neeche charge lagega
+function calcDelivery(amountAfterDiscount, payMethod){
+  if(payMethod==='online') return 0;
+  if(amountAfterDiscount >= SITE.freeDeliveryAbove) return 0;
+  return SITE.deliveryCharge;
+}
+
 function updateCheckoutTotal(){
   const giftCheckout=document.getElementById('giftPkgCheckout')?.checked?SITE.giftPackagingPrice:0;
   const subtotal=cart.reduce((s,c)=>s+c.price*c.qty,0);
   const discount=couponApplied?Math.round(subtotal*(couponDiscount/100)):0;
-  const total=subtotal-discount+giftCheckout;
+  const delivery=cart.length?calcDelivery(subtotal-discount,getSelectedPayMethod()):0;
+  const total=subtotal-discount+giftCheckout+delivery;
   document.getElementById('checkoutSummary').innerHTML=
     cart.map(i=>`<div class="order-summary-line"><span>${i.name.split(' ').slice(0,3).join(' ')} ×${i.qty}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('')+
     (discount?`<div class="order-summary-line" style="color:var(--green)"><span>Coupon Discount</span><span>-${fmt(discount)}</span></div>`:'')+
-    (giftCheckout?`<div class="order-summary-line"><span>🎁 Gift Packaging</span><span>+${fmt(SITE.giftPackagingPrice)}</span></div>`:'');
+    (giftCheckout?`<div class="order-summary-line"><span>🎁 Gift Packaging</span><span>+${fmt(SITE.giftPackagingPrice)}</span></div>`:'')+
+    `<div class="order-summary-line"><span>🚚 Delivery</span><span>${delivery?fmt(delivery):'FREE'}</span></div>`;
   document.getElementById('checkoutTotal').textContent=fmt(total);
 }
 
 function selectPayMethod(el){
   document.querySelectorAll('.pay-method').forEach(p=>p.classList.remove('selected'));
   el.parentElement.classList.add('selected');
-  document.getElementById('cardFields').style.display=el.value==='card'?'block':'none';
+  // online select ho toh contact wala box dikhao
+  const info=document.getElementById('onlinePayInfo');
+  if(info) info.style.display = el.value==='online' ? 'block' : 'none';
+  updateCheckoutTotal(); // payment badalne par delivery/total update ho
 }
 
 function applyCheckoutCoupon(){
@@ -1984,7 +2015,8 @@ function placeOrder(){
   const subtotal=cart.reduce((s,c)=>s+c.price*c.qty,0);
   const discount=couponApplied?Math.round(subtotal*(couponDiscount/100)):0;
   const giftCharge=giftPkg?SITE.giftPackagingPrice:0;
-  const total=subtotal-discount+giftCharge;
+  const delivery=calcDelivery(subtotal-discount, payMethod); // online = 0
+  const total=subtotal-discount+giftCharge+delivery;
   const orderNum='KTN-'+Date.now().toString().slice(-6);
 
   // ── WhatsApp message to YOU (shop owner) ──
@@ -2001,9 +2033,10 @@ function placeOrder(){
 ${itemsList}
 
 💰 *Subtotal:* ${fmt(subtotal)}
-${discount?`🎟️ Discount: -${fmt(discount)}\n`:''}${giftPkg?`🎁 Gift Packaging: +${fmt(giftCharge)}\n`:''}✅ *TOTAL: ${fmt(total)}*
+${discount?`🎟️ Discount: -${fmt(discount)}\n`:''}${giftPkg?`🎁 Gift Packaging: +${fmt(giftCharge)}\n`:''}🚚 Delivery: ${delivery?fmt(delivery):'FREE'}
+✅ *TOTAL: ${fmt(total)}*
 
-💳 *Payment:* ${payMethod==='cod'?'Cash on Delivery':'Online Card Payment'}
+💳 *Payment:* ${payMethod==='cod'?'Cash on Delivery':'Online Payment (customer will contact to pay)'}
 ${giftPkg?'🎁 Gift packaging requested\n':''}
 Please confirm this order.`
   );
@@ -2019,11 +2052,11 @@ waLink.click();
 document.body.removeChild(waLink);
 
  // ── Save order to Supabase ──
-  saveOrderToSupabase({orderNum,fname,lname,phone,email,addr,city,province,payMethod,giftPkg,items:cart,subtotal,discount,giftCharge,total});
+   saveOrderToSupabase({orderNum,fname,lname,phone,email,addr,city,province,payMethod,giftPkg,items:cart,subtotal,discount,giftCharge,delivery,total});
 
   // ── Show order receipt modal ──
   document.getElementById('checkoutModal').classList.remove('open');
-  showOrderReceipt({orderNum,fname,lname,phone,email,addr,city,province,payMethod,giftPkg,subtotal,discount,giftCharge,total});
+   showOrderReceipt({orderNum,fname,lname,phone,email,addr,city,province,payMethod,giftPkg,subtotal,discount,giftCharge,delivery,total});
 
   // ── Reset ──
   cart=[];couponApplied=false;
@@ -2052,6 +2085,7 @@ async function saveOrderToSupabase(o){
         discount: o.discount,
         gift_packaging: !!o.giftPkg,
         gift_charge: o.giftCharge,
+        delivery_charge: o.delivery || 0,   // delivery charge bhi Supabase mein save hoga
         total: o.total,
         payment_method: o.payMethod,
         status: 'pending',
@@ -2088,13 +2122,14 @@ function showOrderReceipt(o){
       <div style="display:flex;justify-content:space-between;color:var(--text-muted);margin-bottom:5px"><span>Subtotal</span><span>${fmt(o.subtotal)}</span></div>
       ${o.discount?`<div style="display:flex;justify-content:space-between;color:var(--green);margin-bottom:5px"><span>Discount</span><span>-${fmt(o.discount)}</span></div>`:''}
       ${o.giftPkg?`<div style="display:flex;justify-content:space-between;color:var(--text-muted);margin-bottom:5px"><span>🎁 Gift Packaging</span><span>+${fmt(o.giftCharge)}</span></div>`:''}
+      <div style="display:flex;justify-content:space-between;color:var(--text-muted);margin-bottom:5px"><span>🚚 Delivery</span><span>${o.delivery?fmt(o.delivery):'FREE'}</span></div>
       <div style="display:flex;justify-content:space-between;font-weight:700;color:var(--espresso);padding-top:8px;border-top:1px solid var(--mist);margin-top:5px;font-size:1rem"><span>Total</span><span>${fmt(o.total)}</span></div>
     </div>
     <div style="background:var(--cream);border-radius:10px;padding:18px;margin-bottom:20px;font-size:.82rem;color:var(--text-muted);line-height:1.8">
       <b style="color:var(--espresso)">📍 Delivery to:</b><br>
       ${o.fname} ${o.lname} — ${o.phone}<br>
       ${o.addr}, ${o.city}${o.province?', '+o.province:''}<br>
-      <b style="color:var(--espresso)">💳 Payment:</b> ${o.payMethod==='cod'?'Cash on Delivery':'Online Card'}
+         <b style="color:var(--espresso)">💳 Payment:</b> ${o.payMethod==='cod'?'Cash on Delivery':'Online Payment — please contact '+SITE.onlinePaymentPhone+' to pay'}
     </div>
     <div style="background:#E8F5E9;border-radius:8px;padding:12px 16px;font-size:.8rem;color:#2E7D32;margin-bottom:16px">
       ✅ A WhatsApp message has been sent to our team with your order details. We'll confirm within 1–2 hours.
