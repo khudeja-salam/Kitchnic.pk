@@ -1762,8 +1762,11 @@ function galGoTo(idx){
 function openProductModal(id){
   const p=products.find(x=>x.id===id);
   if(!p)return;
-  modalProductId=id; modalQtyVal=1; modalSelectedColor=p.colors?p.colors[0]:null; modalSelectedSize=p.sizes?p.sizes[0]:null;
 
+   modalProductId=id; modalQtyVal=1;
+  // pehla colour ka NAAM lo (object ho ya simple hex, dono chalenge)
+  modalSelectedColor = p.colors ? (typeof p.colors[0]==='object' ? (p.colors[0].label||p.colors[0].color) : p.colors[0]) : null;
+  modalSelectedSize=p.sizes?p.sizes[0]:null;
   // Build image gallery
   buildGallery(p);
 
@@ -1787,7 +1790,7 @@ function openProductModal(id){
     const hex=isObj?c.color:c;
     const lbl=isObj?(c.label||hex):hex;
     const cImgs=isObj?JSON.stringify(c.imgs||[]).replace(/"/g,'&quot;'):'[]';
-    return `<div class="color-swatch${i===0?' selected':''}" style="background:${hex}" onclick="selectColor('${hex}',this,JSON.parse(this.dataset.imgs))" data-imgs="${cImgs}" title="${lbl}"></div>`;
+        return `<div class="color-swatch${i===0?' selected':''}" style="background:${hex}" onclick="selectColor('${lbl}',this,JSON.parse(this.dataset.imgs))" data-imgs="${cImgs}" title="${lbl}"></div>`;
   }).join('')
 }</div>`;
 if(typeof p.colors[0]==='object'&&p.colors[0].imgs?.length){
